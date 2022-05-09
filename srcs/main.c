@@ -81,27 +81,30 @@ void	printing(int code)
 		printf("%d %d died", );
 }
 */
-void	*thread_function(int data)
+void	*thread_function(void *i)
 {
-	printf("%d : im here\n", data);
+	int *k = (int*)i;
+	printf("%d\n", *k);
 	return (NULL);
 }
 
 void	thread_creation(t_data *data)
 {
 	int			i;	
-	int			dataa;
-
-	dataa = 0;
-	i = -1;
-	while (++i < data->n_philo)
+	
+	i = 0;
+	while (i < 5)
 	{
-		pthread_create(&data->threads[i], NULL, thread_function(dataa), NULL);
-		dataa++;
+//		printf("%d\n", i);
+		pthread_create(&data->threads[i], NULL, thread_function, &i);
+		i++;
 	}
-//	i = -1;
-//	while (++i < data->n_philo)
-//		pthread_join(data->threads[i], NULL);
+	i = 0;
+	while (i < 5)
+	{
+		pthread_join(data->threads[i], NULL);
+		i++;
+	}
 //	pthread_mutex_init(data->printing, NULL);
 //	pthread_mutex_init(data->eating, NULL);
 /*	i = -1;
