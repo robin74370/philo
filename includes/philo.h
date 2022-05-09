@@ -6,9 +6,11 @@
 # include <stdlib.h>
 # include <pthread.h>
 # include <sys/time.h>
+# include <time.h>
 
 typedef struct s_philo
 {
+	int	philo_id;
 	int	time_to_die;
 	int	time_to_eat;
 	int	time_to_sleep;
@@ -19,14 +21,14 @@ typedef struct s_philo
 
 typedef struct s_data
 {
-	int				philo_number;
-	int				fork_number;
+	t_philo			*philos;
 	pthread_t		*threads;
 	int				n_philo;
-	t_philo			*philos;
-	pthread_mutex_t	printing;
-	pthread_mutex_t	eating;
+	int				fork_number;
+	int				philo_number;
 	pthread_mutex_t	*fork;
+	pthread_mutex_t	eating;
+	pthread_mutex_t	printing;
 }	t_data;
 
 

@@ -1,5 +1,27 @@
 #include "philo.h"
 
+/*
+void	is_thinking(t_data *data)
+{
+
+}
+
+void	is_eating(t_data *data)
+{
+
+}
+
+void	is_sleeping(t_data *data)
+{
+
+}
+
+void	routine(t_data *data)
+{
+
+}
+*/
+
 void	ft_putstr_fd(char *str, int fd)
 {
 	int	i;
@@ -39,12 +61,12 @@ int	ft_atoi(const char *nptr)
 	}
 	return (res * sign);
 }
-/*
-int	time_printing()
-{
 
+int	time_printing(struct timeval *start, struct timeval *end)
+{
+	return ((end->tv_sec - start->tv_sec) + 1e-6*(end->tv_usec - start->tv_usec));
 }
-*/
+/*
 void	printing(int code)
 {
 	if (code == 1)
@@ -58,26 +80,36 @@ void	printing(int code)
 	if (code == 5)
 		printf("%d %d died", );
 }
-
-void	*thread_function(t_data *data)
+*/
+void	*thread_function(int data)
 {
-	(void)data;
-	printf("im here\n");
+	printf("%d : im here\n", data);
 	return (NULL);
 }
 
 void	thread_creation(t_data *data)
 {
 	int			i;	
+	int			dataa;
 
+	dataa = 0;
 	i = -1;
 	while (++i < data->n_philo)
-		pthread_create(&data->threads[i], NULL, thread_function(data), NULL);
-	i = -1;
+	{
+		pthread_create(&data->threads[i], NULL, thread_function(dataa), NULL);
+		dataa++;
+	}
+//	i = -1;
+//	while (++i < data->n_philo)
+//		pthread_join(data->threads[i], NULL);
+//	pthread_mutex_init(data->printing, NULL);
+//	pthread_mutex_init(data->eating, NULL);
+/*	i = -1;
+	data->fork = malloc((n_philo) * sizeof(pthread_mutex_t));
+	if (!data->fork)
+		return (0);
 	while (++i < data->n_philo)
-		pthread_join(data->threads[i], NULL);
-	pthread_mutex_init(data->printing, NULL);
-
+		pthread_mutex_init(data->fork[i], NULL);*/
 }
 
 
@@ -104,12 +136,18 @@ void	init_struct(t_data *data, int ac, char **av)
 		else
 			data->philos[i].number_of_times_each_philosophers_must_eat = 0;
 	}
+	i = -1;
+	while(++i < data->n_philo)
+		data->philos[i].philo_id = i;
 }
 
 int	main(int ac, char **av)
 {	
 	t_data	data;
+//	struct	timeval start;
+//	struct	timeval end;
 
+//	gettimeofday(&start, NULL);
 	if (!(ac >= 5 && ac <= 6))
 		my_error_message("Wrong number of arguments\n");
 	data.n_philo = atoi(av[1]);
@@ -120,6 +158,8 @@ int	main(int ac, char **av)
 		return (0);
 	init_struct(&data, ac, av);
 	thread_creation(&data);
+//	gettimeofday(&start, NULL);
+//	printf("%d\n", time_printing(&start, &end));
 //	printf("%d\n",data.philos[0].time_to_die);
 //	printf("%d\n",data.philos[0].time_to_eat);
 //	printf("%d\n",data.philos[0].time_to_sleep);
