@@ -11,12 +11,8 @@
 typedef struct s_philo
 {
 	int	philo_id;
-	int	time_to_die;
-	int	time_to_eat;
-	int	time_to_sleep;
-	int	left_fork;
-	int	right_fork;
-	int	number_of_times_each_philosophers_must_eat;
+	int	left_fork_state;
+	int	right_fork_state;
 }	t_philo;
 
 typedef struct s_data
@@ -25,12 +21,18 @@ typedef struct s_data
 	pthread_t		*threads;
 	int				n_philo;
 	int				fork_number;
-	int				philo_number;
+	int				time_to_eat;
+	int				died_count;
+	int				time_to_die;
+	int				time_to_sleep;
+	int				number_of_times_each_philosophers_must_eat;
 	pthread_mutex_t	*fork;
 	pthread_mutex_t	eating;
 	pthread_mutex_t	printing;
 }	t_data;
 
-
+int		ft_atoi(const char *nptr);
+void	ft_putstr_fd(char *str, int fd);
+void	my_error_message(char *message);
 
 #endif
