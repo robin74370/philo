@@ -5,22 +5,24 @@ unsigned long long	time_conversion()
 	struct timeval tv;
 	unsigned long long	time;
 	
-	(void)tv;
 	gettimeofday(&tv, NULL);
 	time = (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
 	return (time);
 }
 
-void	printing(int philo_id, int code, unsigned long long time)
+void	printing(int philo_id, int code)
 {
-//	if (code == 1)
-//		printf("%d %d has taken a fork\n", philo_id );
-//	if (code == 2)
-//		printf("%d %d is eating\n", philo_id, );
+	unsigned long long time;
+
+	time = time_conversion();
+	if (code == 1)
+		printf("%d %llu has taken a fork\n", philo_id, time);
+	if (code == 2)
+		printf("%d %llu is eating\n", philo_id, time);
 	if (code == 3)
 		printf("%d %llu is sleeping\n", philo_id, time);
-//	if (code == 4)
-//		printf("%d %d is thinking\n", philo_id, );
+	if (code == 4)
+		printf("%d %llu is thinking\n", philo_id, time);
 //	if (code == 5)
 //		printf("%d %d died\n", philo_id, );
 }
@@ -31,25 +33,36 @@ void	check_died(t_data *data)
 	if (data->died_count != 0)
 		exit(-42);
 }
-
-void	is_thinking(int philos_id, t_data *data)
-{
-
-}
-
-void	is_eating(int philos_id, t_data *data)
-{
-	//check si les fourchettes sont libres
-	printing()
-}
 */
+void	is_thinking(int philo_id, t_data *data)
+{
+	(void)data;
+	printing(philo_id, 4);
+}
+
+void	is_eating(int philo_id, t_data *data)
+{	
+	pthread_mutex_lock(&data->fork[philo_id]);
+	printing(philo_id, 1);
+	if (philo_id == 1)
+		pthread_mutex_lock(&data->fork[data->n_philo]);
+	else
+		pthread_mutex_lock(&data->fork[philo_id - 1]);
+	printing(philo_id, 1);
+	printing(philo_id, 2);
+	usleep(data->time_to_eat * 1000);
+}
+
 void	is_sleeping(int philo_id, t_data *data)
 {
-	int		time;
+	if (philo_id == 1)
+		pthread_mutex_unlock(&data->fork[data->n_philo]);
+	else
+		pthread_mutex_unlock(&data->fork[philo_id - 1]);
+	pthread_mutex_unlock(&data->fork[philo_id]);
 	
-	usleep(data->time_to_sleep / 10);
-	time = time_conversion();
-	printing(philo_id, 3, time);
+	usleep(data->time_to_sleep * 1000);
+	printing(philo_id, 3);
 }
 
 void	*routine(void *data)
@@ -58,13 +71,15 @@ void	*routine(void *data)
 	t_data	*tmp;
 
 	tmp = (t_data *)data;
-	i = -1;
-	while (++i < tmp->n_philo)
+	i = 0;
+	while (1)
 	{
-//		if (tmp->philos[i].philo_id % 2 == 0)
-//			is_eating(tmp->philos[i].philos_id, data);
-//		else
-			is_sleeping(tmp->philos[i].philo_id, data);
+		if (i == tmp->n_philo)
+			i = 0;
+		is_eating(tmp->philos[i].philo_id, tmp);
+		is_sleeping(tmp->philos[i].philo_id, tmp);
+		is_thinking(tmp->philos[i].philo_id, tmp);
+		i++;
 	}
 	return (NULL);
 }
@@ -73,25 +88,35 @@ void	thread_creation(t_data *data)
 {
 	int			i;	
 	
+	pthread_mutex_init(&data->printing, NULL);
+	pthread_mutex_init(&data->eating, NULL);
 	i = -1;
-	while (++i < 5)
-		pthread_create(&data->threads[i], NULL, routine, data);
+	while (++i < data->n_philo)
+		pthread_mutex_init(&data->fork[i], NULL);
 	i = -1;
-	while (++i < 5)
+	data->time = time_conversion();
+	while (++i < data->n_philo)
+		pthread_create(&data->threads[i], NULL, &routine, data);
+	i = -1;
+	while (++i < data->n_philo)
 		pthread_join(data->threads[i], NULL);
-//	pthread_mutex_init(data->printing, NULL);
-//	pthread_mutex_init(data->eating, NULL);
 }
 
 void	init_struct(t_data *data, int ac, char **av)
 {
 	int	i;
 
+	data->philos = malloc((data->n_philo) * sizeof(t_philo));
+	if (!data->philos)
+		return ;
 	data->threads = malloc((data->n_philo) * sizeof(pthread_t));
 	if (!data->threads)
 		return ;
 	data->philos = malloc((data->n_philo) * sizeof(t_philo));
 	if (!data->philos)
+		return ;
+	data->fork = malloc((data->n_philo) * sizeof(pthread_mutex_t));
+	if (!data->fork)
 		return ;
 	i = -1;
 	while(++i < data->n_philo)
@@ -111,20 +136,12 @@ void	init_struct(t_data *data, int ac, char **av)
 int	main(int ac, char **av)
 {	
 	t_data	data;
-//	struct	timeval start;
-//	struct	timeval end;
 
-//	gettimeofday(&start, NULL);
 	if (!(ac >= 5 && ac <= 6))
 		my_error_message("Wrong number of arguments\n");
 	data.n_philo = atoi(av[1]);
 	if (data.n_philo < 1)
 		my_error_message("Incorrect inputs\n");
-	data.philos = malloc((data.n_philo) * sizeof(t_philo));
-	if (!data.philos)
-		return (0);
 	init_struct(&data, ac, av);
 	thread_creation(&data);
-//	gettimeofday(&start, NULL);
-//	printf("%d\n", time_printing(&start, &end));
 }
