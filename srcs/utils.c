@@ -1,5 +1,15 @@
 #include "philo.h"
 
+unsigned long long	time_conversion()
+{
+	struct timeval tv;
+	unsigned long long	time;
+	
+	gettimeofday(&tv, NULL);
+	time = (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
+	return (time);
+}
+
 void	ft_putstr_fd(char *str, int fd)
 {
 	int	i;
