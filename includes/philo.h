@@ -34,9 +34,9 @@ typedef struct s_data
 int					ft_atoi(const char *nptr);
 void				ft_putstr_fd(char *str, int fd);
 void				my_error_message(char *message);
-void				is_eating(int philo_id, t_data *data);
-void				is_sleeping(int philo_id, t_data *data);
-void				is_thinking(int philo_id, t_data *data);
+void				is_eating(t_data *data);
+void				is_sleeping(t_data *data);
+void				is_thinking(t_data *data);
 unsigned long long	time_conversion();
 
 #endif
