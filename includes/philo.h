@@ -7,18 +7,22 @@
 # include <pthread.h>
 # include <sys/time.h>
 
+typedef struct s_data t_data;
+
 typedef struct s_philo
 {
-	int	philo_id;
-	int	last_eat;
-	int	eat_count;
-	int	status;
+	pthread_t		thread;
+	int				philo_id;
+	int				last_eat;
+	int				eat_count;
+	int				status;
+	pthread_mutex_t	fork;
+	t_data			*data_back;
 }	t_philo;
 
-typedef struct s_data
+struct s_data
 {
 	t_philo			*philos;
-	pthread_t		*threads;
 	int				n_philo;
 	int				time;
 	int				time_to_eat;
@@ -26,17 +30,16 @@ typedef struct s_data
 	int				time_to_die;
 	int				time_to_sleep;
 	int				number_eat_each_philo;
-	pthread_mutex_t	*fork;
 	pthread_mutex_t	eating;
 	pthread_mutex_t	printing;
-}	t_data;
+};
 
 int					ft_atoi(const char *nptr);
 void				ft_putstr_fd(char *str, int fd);
 void				my_error_message(char *message);
-void				is_eating(t_data *data);
-void				is_sleeping(t_data *data);
-void				is_thinking(t_data *data);
+void				is_eating(t_philo *philo);
+void				is_sleeping(t_philo *philo);
+void				is_thinking(t_philo *philo);
 unsigned long long	time_conversion();
 
 #endif
