@@ -16,6 +16,7 @@ typedef struct s_philo
 	int				last_eat;
 	int				eat_count;
 	int				status;
+	int				died;
 	pthread_mutex_t	fork;
 	t_data			*data_back;
 }	t_philo;

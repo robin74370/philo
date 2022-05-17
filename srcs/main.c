@@ -1,16 +1,21 @@
 #include "philo.h"
 
+long calcul_ms()
+{
+	static long	start;
+
+	if (!start)
+		start = time_conversion();
+	return (time_conversion() - start);
+}
 
 void	printing(int code, t_philo *philo)
 {
-	static unsigned long long tmp;
 	unsigned long long time;
 
-	if (!tmp)
-		tmp = time_conversion();
-	time = (time_conversion() - tmp);
-	philo->last_eat = time;
-	printf("tiiiiime : %lld\n", time);
+	time = calcul_ms();
+//	philo->last_eat = time;
+//	printf("id : %d last eat : %d\n", philo->philo_id, philo->last_eat);
 	if (code == 1)
 		printf("%llu %d has taken a fork\n", time, philo->philo_id);
 	if (code == 2)
@@ -22,13 +27,13 @@ void	printing(int code, t_philo *philo)
 	if (code == 5)
 		printf("%llu %d died\n", time, philo->philo_id);
 }
-/*
+
 void	check_died(t_data *data)
 {
 	if (data->died_count != 0)
 		exit(-42);
 }
-*/
+
 void	is_thinking(t_philo *philo)
 {
 	(void)philo;
@@ -38,11 +43,27 @@ void	is_thinking(t_philo *philo)
 
 void	is_eating(t_philo *philo)
 {	
+//	static unsigned long long tmp;
 //	int	time;
-	int							id_tmp;
-	
-	id_tmp = philo->philo_id;
+	int	id_tmp;
+//	int	last;
+
+//	time = calcul_ms();	
+//	if (!tmp)
+//		tmp = time_conversion();
 //	time = (time_conversion() - tmp);
+//	last = time - philo->last_eat;
+//	printf("time : %d\n", time);
+//	printf("last eat : %d\n", philo->last_eat);
+
+
+//	if (last > philo->data_back->time_to_die)
+//	{
+//		printing(5, philo);
+//		exit(-42);
+//	}
+//	philo->last_eat = time;
+	id_tmp = philo->philo_id;
 	pthread_mutex_lock(&philo->fork);
 	if (philo->philo_id == philo->data_back->n_philo)
 		pthread_mutex_lock(&philo->data_back->philos[0].fork);
@@ -51,17 +72,23 @@ void	is_eating(t_philo *philo)
 	printing(1, philo);
 	printing(1, philo);
 	printing(2, philo);
+	philo->last_eat = calcul_ms();
 	usleep(philo->data_back->time_to_eat * 1000);
+	philo->status = 2;
+//	printf("after : %d\n", philo->last_eat);
+
+}
+
+void	is_sleeping(t_philo *philo)
+{
+	int	id_tmp;
+	
+	id_tmp = philo->philo_id;
 	pthread_mutex_unlock(&philo->fork);
 	if (philo->philo_id == philo->data_back->n_philo)
 		pthread_mutex_unlock(&philo->data_back->philos[0].fork);
 	else
 		pthread_mutex_unlock(&philo->data_back->philos[id_tmp].fork);
-	philo->status = 2;
-}
-
-void	is_sleeping(t_philo *philo)
-{
 //	int							id_tmp;	
 	
 //	id_tmp = philo->philo_id;
@@ -82,6 +109,8 @@ void	*routine(void *philo)
 			is_sleeping(tmp);
 		if (tmp->status == 3)
 			is_thinking(tmp);
+		if (tmp->philo_id % 2 == 0)
+			usleep(100);
 	}
 	return (NULL);
 }
@@ -99,6 +128,17 @@ void	thread_creation(t_data *data)
 	i = -1;
 	while (++i < data->n_philo)
 		pthread_create(&data->philos[i].thread, NULL, &routine, &data->philos[i]);
+	while (1)
+	{
+		i = -1;
+		while (++i < data->n_philo)
+		{
+			if (data->philos[i].died == 1)
+			{
+				printing(5, &data->philos[i]);
+			}
+		}
+	}
 	i = -1;
 	while (++i < data->n_philo)
 		pthread_join(data->philos[i].thread, NULL);
@@ -127,7 +167,12 @@ void	init_struct(t_data *data, int ac, char **av)
 	i = -1;
 	while (++i < data->n_philo)
 		data->philos[i].status = 1;
-	
+	i = -1;
+	while (++i < data->n_philo)
+		data->philos[i].last_eat = 0;
+	i = -1;
+	while (++i < data->n_philo)
+		data->philos[i].died = 0;	
 	
 /*	i = -1;
 	while (++i < data->n_philo)
@@ -147,6 +192,6 @@ int	main(int ac, char **av)
 	if (data.n_philo < 1)
 		my_error_message("Incorrect inputs\n");
 	init_struct(&data, ac, av);
-	
 	thread_creation(&data);
+
 }
