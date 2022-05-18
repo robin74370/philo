@@ -10,6 +10,15 @@ unsigned long long	time_conversion()
 	return (time);
 }
 
+void	ft_usleep(int time)
+{
+	int start;
+
+	start = time_conversion();
+	while ((unsigned long long)time > (time_conversion() - start))
+		usleep(100);
+}
+
 void	ft_putstr_fd(char *str, int fd)
 {
 	int	i;

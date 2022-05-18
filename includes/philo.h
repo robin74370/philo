@@ -32,6 +32,7 @@ struct s_data
 	int				time_to_sleep;
 	int				number_eat_each_philo;
 	int				num_each_philo_count;
+	int				booleen_died;
 	pthread_mutex_t	eating;
 	pthread_mutex_t	printing;
 };
@@ -43,5 +44,6 @@ void				is_eating(t_philo *philo);
 void				is_sleeping(t_philo *philo);
 void				is_thinking(t_philo *philo);
 unsigned long long	time_conversion();
+void	ft_usleep(int time);
 
 #endif
