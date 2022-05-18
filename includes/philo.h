@@ -31,6 +31,7 @@ struct s_data
 	int				time_to_die;
 	int				time_to_sleep;
 	int				number_eat_each_philo;
+	int				num_each_philo_count;
 	pthread_mutex_t	eating;
 	pthread_mutex_t	printing;
 };

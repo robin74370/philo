@@ -36,33 +36,29 @@ void	check_died(t_data *data)
 
 void	is_thinking(t_philo *philo)
 {
-	(void)philo;
+	if (philo->philo_id % 2 != 0)
+		usleep(((2 * philo->data_back->time_to_eat)
+			- philo->data_back->time_to_sleep) * 1000);
+	else
+		usleep((philo->data_back->time_to_eat
+			- philo->data_back->time_to_sleep));
 	printing(4, philo);
 	philo->status = 1;
 }
 
 void	is_eating(t_philo *philo)
 {	
-//	static unsigned long long tmp;
-//	int	time;
 	int	id_tmp;
-//	int	last;
+	static unsigned long long tmp;
+	int	time;
+	int	last;
 
-//	time = calcul_ms();	
-//	if (!tmp)
-//		tmp = time_conversion();
-//	time = (time_conversion() - tmp);
-//	last = time - philo->last_eat;
-//	printf("time : %d\n", time);
-//	printf("last eat : %d\n", philo->last_eat);
-
-
-//	if (last > philo->data_back->time_to_die)
-//	{
-//		printing(5, philo);
-//		exit(-42);
-//	}
-//	philo->last_eat = time;
+	(void)last;
+	time = calcul_ms();	
+	if (!tmp)
+		tmp = time_conversion();
+	time = (time_conversion() - tmp);
+	last = time - philo->last_eat;
 	id_tmp = philo->philo_id;
 	pthread_mutex_lock(&philo->fork);
 	if (philo->philo_id == philo->data_back->n_philo)
@@ -73,6 +69,7 @@ void	is_eating(t_philo *philo)
 	printing(1, philo);
 	printing(2, philo);
 	philo->last_eat = calcul_ms();
+	philo->eat_count++;
 	usleep(philo->data_back->time_to_eat * 1000);
 	philo->status = 2;
 //	printf("after : %d\n", philo->last_eat);
@@ -109,15 +106,15 @@ void	*routine(void *philo)
 			is_sleeping(tmp);
 		if (tmp->status == 3)
 			is_thinking(tmp);
-		if (tmp->philo_id % 2 == 0)
-			usleep(100);
+//		if (tmp->philo_id % 2 == 0)
+//			usleep(100);
 	}
 	return (NULL);
 }
 
 void	thread_creation(t_data *data)
 {
-	int			i;	
+	int			i;
 	
 	//data->time = time_conversion();
 	pthread_mutex_init(&data->printing, NULL);
@@ -133,10 +130,18 @@ void	thread_creation(t_data *data)
 		i = -1;
 		while (++i < data->n_philo)
 		{
-			if (data->philos[i].died == 1)
+			if (calcul_ms() - data->philos[i].last_eat >= data->time_to_die)
 			{
 				printing(5, &data->philos[i]);
+				exit(-42);
 			}
+			if (data->number_eat_each_philo != -1)
+			{
+				if (data->philos[i].eat_count == data->number_eat_each_philo)
+					data->num_each_philo_count++;
+			}
+			if (data->num_each_philo_count == data->number_eat_each_philo)
+				exit (-42);
 		}
 	}
 	i = -1;
@@ -160,26 +165,15 @@ void	init_struct(t_data *data, int ac, char **av)
 		data->number_eat_each_philo = -1;
 	i = -1;
 	while(++i < data->n_philo)
+	{
 		data->philos[i].philo_id = i + 1;
-	i = -1;
-	while (++i < data->n_philo)
 		data->philos[i].data_back = data;
-	i = -1;
-	while (++i < data->n_philo)
 		data->philos[i].status = 1;
-	i = -1;
-	while (++i < data->n_philo)
 		data->philos[i].last_eat = 0;
-	i = -1;
-	while (++i < data->n_philo)
 		data->philos[i].died = 0;	
-	
-/*	i = -1;
-	while (++i < data->n_philo)
-		data->philos[i].eat_count = 0;
-	i = -1;
-	while (++i < data->n_philo)
-		data->philos[i].status = 0;*/
+		data->philos[i].eat_count = -1;
+	}
+	data->num_each_philo_count = 0;
 }
 
 int	main(int ac, char **av)
