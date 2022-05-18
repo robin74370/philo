@@ -42,10 +42,10 @@ void	printing(int code, t_philo *philo)
 void	is_thinking(t_philo *philo)
 {
 	if (philo->philo_id % 2 != 0)
-		ft_usleep(((2 * philo->data_back->time_to_eat)
+		usleep(((2 * philo->data_back->time_to_eat)
 			- philo->data_back->time_to_sleep) * 1000);
 	else
-		ft_usleep((philo->data_back->time_to_eat
+		usleep((philo->data_back->time_to_eat
 			- philo->data_back->time_to_sleep));
 	printing(4, philo);
 	philo->status = 1;
@@ -75,7 +75,7 @@ void	is_eating(t_philo *philo)
 	printing(2, philo);
 	philo->last_eat = calcul_ms();
 	philo->eat_count++;
-	ft_usleep(philo->data_back->time_to_eat * 1000);
+	usleep(philo->data_back->time_to_eat * 1000);
 	philo->status = 2;
 }
 
@@ -92,7 +92,7 @@ void	is_sleeping(t_philo *philo)
 //	int							id_tmp;	
 	
 //	id_tmp = philo->philo_id;
-	ft_usleep(philo->data_back->time_to_sleep);
+	usleep(philo->data_back->time_to_sleep);
 	philo->status = 3;
 }
 
@@ -104,9 +104,9 @@ void	*routine(void *philo)
 	pthread_mutex_lock(&tmp->data_back->printing);
 	pthread_mutex_unlock(&tmp->data_back->printing);
 	if (tmp->data_back->n_philo % 2 == 0 && tmp->philo_id % 2 == 0)
-		ft_usleep(tmp->data_back->time_to_eat);
+		usleep(tmp->data_back->time_to_eat);
 	else if (tmp->data_back->n_philo % 2 == 1)
-		ft_usleep(tmp->data_back->time_to_eat * (tmp->philo_id % 3));
+		usleep(tmp->data_back->time_to_eat * (tmp->philo_id % 3));
 	tmp->last_eat = calcul_ms();
 	while (1)
 	{
@@ -138,7 +138,7 @@ void	thread_creation(t_data *data)
 	i = 0;
 	while (i < data->n_philo)
 	{
-		ft_usleep(200);
+		usleep(200);
 		if (calcul_ms() - data->philos[i].last_eat >= data->time_to_die)
 		{
 			printing(5, &data->philos[i]);
