@@ -37,13 +37,14 @@ struct s_data
 	pthread_mutex_t	printing;
 };
 
+long 				calcul_ms();
 int					ft_atoi(const char *nptr);
 void				ft_putstr_fd(char *str, int fd);
 void				my_error_message(char *message);
 void				is_eating(t_philo *philo);
 void				is_sleeping(t_philo *philo);
 void				is_thinking(t_philo *philo);
+//void				ft_usleep(int time);
 unsigned long long	time_conversion();
-void	ft_usleep(int time);
 
 #endif

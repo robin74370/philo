@@ -89,9 +89,6 @@ void	is_sleeping(t_philo *philo)
 		pthread_mutex_unlock(&philo->data_back->philos[0].fork);
 	else
 		pthread_mutex_unlock(&philo->data_back->philos[id_tmp].fork);
-//	int							id_tmp;	
-	
-//	id_tmp = philo->philo_id;
 	usleep(philo->data_back->time_to_sleep);
 	philo->status = 3;
 }
@@ -120,21 +117,10 @@ void	*routine(void *philo)
 	return (NULL);
 }
 
-void	thread_creation(t_data *data)
+void	check_data(t_data *data)
 {
-	int			i;
+	int	i;
 	
-	//data->time = time_conversion();
-	pthread_mutex_init(&data->printing, NULL);
-//	pthread_mutex_init(&data->eating, NULL);
-	i = -1;
-	while (++i < data->n_philo)
-		pthread_mutex_init(&data->philos[i].fork, NULL);
-	i = -1;
-	pthread_mutex_lock(&data->printing);
-	while (++i < data->n_philo)
-		pthread_create(&data->philos[i].thread, NULL, &routine, &data->philos[i]);
-	pthread_mutex_unlock(&data->printing);
 	i = 0;
 	while (i < data->n_philo)
 	{
@@ -153,6 +139,22 @@ void	thread_creation(t_data *data)
 			exit (-42);
 		i = (i + 1) % data->n_philo;
 	}
+}
+
+void	thread_creation(t_data *data)
+{
+	int			i;
+	
+	pthread_mutex_init(&data->printing, NULL);
+	i = -1;
+	while (++i < data->n_philo)
+		pthread_mutex_init(&data->philos[i].fork, NULL);
+	i = -1;
+	pthread_mutex_lock(&data->printing);
+	while (++i < data->n_philo)
+		pthread_create(&data->philos[i].thread, NULL, &routine, &data->philos[i]);
+	pthread_mutex_unlock(&data->printing);
+	check_data(data);
 	i = -1;
 	while (++i < data->n_philo)
 		pthread_join(data->philos[i].thread, NULL);

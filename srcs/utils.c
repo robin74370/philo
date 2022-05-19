@@ -9,16 +9,19 @@ unsigned long long	time_conversion()
 	time = (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
 	return (time);
 }
-
+/*
 void	ft_usleep(int time)
 {
-	int start;
+	static long start;
 
-	start = time_conversion();
-	while ((unsigned long long)time > (time_conversion() - start))
+	if (!start)
+		start = time_conversion();
+//	start = time_conversion();
+	printf("%ld\n", start);
+	while (time > ((long)time_conversion() - start))
 		usleep(100);
 }
-
+*/
 void	ft_putstr_fd(char *str, int fd)
 {
 	int	i;
