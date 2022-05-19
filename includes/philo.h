@@ -6,7 +6,7 @@
 /*   By: repinat <repinat@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/19 16:03:03 by repinat           #+#    #+#             */
-/*   Updated: 2022/05/19 16:14:21 by repinat          ###   ########.fr       */
+/*   Updated: 2022/05/19 16:16:11 by repinat          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ void				is_thinking(t_philo *philo);
 void				is_eating(t_philo *philo);
 void				is_sleeping(t_philo *philo);
 void				*routine(void *philo);
+void				printing(int code, t_philo *philo);
 unsigned long long	time_conversion(void);
 
 #endif

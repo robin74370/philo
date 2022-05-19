@@ -6,7 +6,7 @@
 /*   By: repinat <repinat@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/19 16:02:28 by repinat           #+#    #+#             */
-/*   Updated: 2022/05/19 16:12:50 by repinat          ###   ########.fr       */
+/*   Updated: 2022/05/19 16:23:31 by repinat          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,4 +122,5 @@ int	main(int ac, char **av)
 		my_error_message("Incorrect inputs\n");
 	init_struct(&data, ac, av);
 	thread_creation(&data);
+	free(data.philos);
 }
