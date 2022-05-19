@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: repinat <repinat@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/05/19 16:03:03 by repinat           #+#    #+#             */
+/*   Updated: 2022/05/19 16:14:21 by repinat          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PHILO_H
 # define PHILO_H
 
@@ -7,7 +19,7 @@
 # include <pthread.h>
 # include <sys/time.h>
 
-typedef struct s_data t_data;
+typedef struct s_data	t_data;
 
 typedef struct s_philo
 {
@@ -15,7 +27,6 @@ typedef struct s_philo
 	int				philo_id;
 	int				last_eat;
 	int				eat_count;
-	int				status;
 	int				died;
 	pthread_mutex_t	fork;
 	t_data			*data_back;
@@ -37,14 +48,14 @@ struct s_data
 	pthread_mutex_t	printing;
 };
 
-long 				calcul_ms();
+long				calcul_ms(void);
 int					ft_atoi(const char *nptr);
 void				ft_putstr_fd(char *str, int fd);
 void				my_error_message(char *message);
+void				is_thinking(t_philo *philo);
 void				is_eating(t_philo *philo);
 void				is_sleeping(t_philo *philo);
-void				is_thinking(t_philo *philo);
-//void				ft_usleep(int time);
-unsigned long long	time_conversion();
+void				*routine(void *philo);
+unsigned long long	time_conversion(void);
 
 #endif

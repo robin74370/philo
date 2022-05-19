@@ -1,27 +1,36 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: repinat <repinat@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/05/19 16:02:40 by repinat           #+#    #+#             */
+/*   Updated: 2022/05/19 16:13:34 by repinat          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
-unsigned long long	time_conversion()
+long	calcul_ms(void)
 {
-	struct timeval tv;
+	static long	start;
+
+	if (!start)
+		start = time_conversion();
+	return (time_conversion() - start);
+}
+
+unsigned long long	time_conversion(void)
+{
+	struct timeval		tv;
 	unsigned long long	time;
-	
+
 	gettimeofday(&tv, NULL);
 	time = (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
 	return (time);
 }
-/*
-void	ft_usleep(int time)
-{
-	static long start;
 
-	if (!start)
-		start = time_conversion();
-//	start = time_conversion();
-	printf("%ld\n", start);
-	while (time > ((long)time_conversion() - start))
-		usleep(100);
-}
-*/
 void	ft_putstr_fd(char *str, int fd)
 {
 	int	i;

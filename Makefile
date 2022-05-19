@@ -3,6 +3,7 @@ SRC_DIR		=	./srcs/
 INC_DIR		=	./includes/
 SRCS		=	main.c\
 				utils.c\
+				routine.c\
 
 SRC_BASENAME    =    $(addprefix $(SRC_DIR), $(SRCS))
 OBJS            =    $(SRC_BASENAME:.c=.o)

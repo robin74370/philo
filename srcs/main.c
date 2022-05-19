@@ -1,17 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: repinat <repinat@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/05/19 16:02:28 by repinat           #+#    #+#             */
+/*   Updated: 2022/05/19 16:12:50 by repinat          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
-
-long calcul_ms()
-{
-	static long	start;
-
-	if (!start)
-		start = time_conversion();
-	return (time_conversion() - start);
-}
 
 void	printing(int code, t_philo *philo)
 {
-	unsigned long long time;
+	unsigned long long	time;
 
 	pthread_mutex_lock(&philo->data_back->printing);
 	if (philo->data_back->booleen_died)
@@ -19,10 +22,7 @@ void	printing(int code, t_philo *philo)
 		pthread_mutex_unlock(&philo->data_back->printing);
 		return ;
 	}
-//dprintf(2, "")
 	time = calcul_ms();
-//	philo->last_eat = time;
-//	printf("id : %d last eat : %d\n", philo->philo_id, philo->last_eat);
 	if (code == 1)
 		printf("%llu %d has taken a fork\n", time, philo->philo_id);
 	if (code == 2)
@@ -39,91 +39,15 @@ void	printing(int code, t_philo *philo)
 	pthread_mutex_unlock(&philo->data_back->printing);
 }
 
-void	is_thinking(t_philo *philo)
-{
-	if (philo->philo_id % 2 != 0)
-		usleep(((2 * philo->data_back->time_to_eat)
-			- philo->data_back->time_to_sleep) * 1000);
-	else
-		usleep((philo->data_back->time_to_eat
-			- philo->data_back->time_to_sleep));
-	printing(4, philo);
-	philo->status = 1;
-}
-
-void	is_eating(t_philo *philo)
-{	
-	int	id_tmp;
-	static unsigned long long tmp;
-	int	time;
-	int	last;
-
-	(void)last;
-	time = calcul_ms();	
-	if (!tmp)
-		tmp = time_conversion();
-	time = (time_conversion() - tmp);
-	last = time - philo->last_eat;
-	id_tmp = philo->philo_id;
-	pthread_mutex_lock(&philo->fork);
-	if (philo->philo_id == philo->data_back->n_philo)
-		pthread_mutex_lock(&philo->data_back->philos[0].fork);
-	else
-		pthread_mutex_lock(&philo->data_back->philos[id_tmp].fork);
-	printing(1, philo);
-	printing(1, philo);
-	printing(2, philo);
-	philo->last_eat = calcul_ms();
-	philo->eat_count++;
-	usleep(philo->data_back->time_to_eat * 1000);
-	philo->status = 2;
-}
-
-void	is_sleeping(t_philo *philo)
-{
-	int	id_tmp;
-	
-	id_tmp = philo->philo_id;
-	pthread_mutex_unlock(&philo->fork);
-	if (philo->philo_id == philo->data_back->n_philo)
-		pthread_mutex_unlock(&philo->data_back->philos[0].fork);
-	else
-		pthread_mutex_unlock(&philo->data_back->philos[id_tmp].fork);
-	usleep(philo->data_back->time_to_sleep);
-	philo->status = 3;
-}
-
-void	*routine(void *philo)
-{
-	t_philo	*tmp;
-
-	tmp = (t_philo *)philo;
-	pthread_mutex_lock(&tmp->data_back->printing);
-	pthread_mutex_unlock(&tmp->data_back->printing);
-	if (tmp->data_back->n_philo % 2 == 0 && tmp->philo_id % 2 == 0)
-		usleep(tmp->data_back->time_to_eat);
-	else if (tmp->data_back->n_philo % 2 == 1)
-		usleep(tmp->data_back->time_to_eat * (tmp->philo_id % 3));
-	tmp->last_eat = calcul_ms();
-	while (1)
-	{
-		if (tmp->status == 1)
-			is_eating(tmp);
-		if (tmp->status == 2)
-			is_sleeping(tmp);
-		if (tmp->status == 3)
-			is_thinking(tmp);
-	}
-	return (NULL);
-}
-
 void	check_data(t_data *data)
 {
 	int	i;
-	
+
 	i = 0;
 	while (i < data->n_philo)
 	{
+		if (i == data->n_philo)
+			i = 0;
 		usleep(200);
 		if (calcul_ms() - data->philos[i].last_eat >= data->time_to_die)
 		{
@@ -137,14 +61,13 @@ void	check_data(t_data *data)
 		}
 		if (data->num_each_philo_count == data->number_eat_each_philo)
 			exit (-42);
-		i = (i + 1) % data->n_philo;
 	}
 }
 
 void	thread_creation(t_data *data)
 {
 	int			i;
-	
+
 	pthread_mutex_init(&data->printing, NULL);
 	i = -1;
 	while (++i < data->n_philo)
@@ -152,7 +75,8 @@ void	thread_creation(t_data *data)
 	i = -1;
 	pthread_mutex_lock(&data->printing);
 	while (++i < data->n_philo)
-		pthread_create(&data->philos[i].thread, NULL, &routine, &data->philos[i]);
+		pthread_create(&data->philos[i].thread,
+			NULL, &routine, &data->philos[i]);
 	pthread_mutex_unlock(&data->printing);
 	check_data(data);
 	i = -1;
@@ -175,13 +99,12 @@ void	init_struct(t_data *data, int ac, char **av)
 	else
 		data->number_eat_each_philo = -1;
 	i = -1;
-	while(++i < data->n_philo)
+	while (++i < data->n_philo)
 	{
 		data->philos[i].philo_id = i + 1;
 		data->philos[i].data_back = data;
-		data->philos[i].status = 1;
 		data->philos[i].last_eat = 0;
-		data->philos[i].died = 0;	
+		data->philos[i].died = 0;
 		data->philos[i].eat_count = -1;
 	}
 	data->num_each_philo_count = 0;
@@ -199,5 +122,4 @@ int	main(int ac, char **av)
 		my_error_message("Incorrect inputs\n");
 	init_struct(&data, ac, av);
 	thread_creation(&data);
-
 }
