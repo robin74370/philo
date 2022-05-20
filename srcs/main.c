@@ -51,8 +51,9 @@ void	check_data(t_data *data)
 		usleep(200);
 		if (calcul_ms() - data->philos[i].last_eat >= data->time_to_die)
 		{
+			pthread_mutex_unlock(&data->philos[0].fork);
 			printing(5, &data->philos[i]);
-			exit(-42);
+			free_and_destroy(data);
 		}
 		if (data->number_eat_each_philo != -1)
 		{
@@ -60,7 +61,7 @@ void	check_data(t_data *data)
 				data->num_each_philo_count++;
 		}
 		if (data->num_each_philo_count == data->number_eat_each_philo)
-			exit (-42);
+			free_and_destroy(data);
 	}
 }
 
@@ -122,5 +123,5 @@ int	main(int ac, char **av)
 		my_error_message("Incorrect inputs\n");
 	init_struct(&data, ac, av);
 	thread_creation(&data);
-	free(data.philos);
+	free_and_destroy(&data);
 }

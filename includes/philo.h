@@ -57,6 +57,7 @@ void				is_eating(t_philo *philo);
 void				is_sleeping(t_philo *philo);
 void				*routine(void *philo);
 void				printing(int code, t_philo *philo);
+void				free_and_destroy(t_data *data);
 unsigned long long	time_conversion(void);
 
 #endif
