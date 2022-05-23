@@ -51,7 +51,8 @@ void	check_data(t_data *data)
 		usleep(200);
 		if (calcul_ms() - data->philos[i].last_eat >= data->time_to_die)
 		{
-			pthread_mutex_unlock(&data->philos[0].fork);
+//			pthread_mutex_unlock(&data->philos[i].fork);
+//			pthread_mutex_unlock(&data->philos[i + 1].fork);
 			printing(5, &data->philos[i]);
 			free_and_destroy(data);
 		}
@@ -102,9 +103,9 @@ void	init_struct(t_data *data, int ac, char **av)
 	i = -1;
 	while (++i < data->n_philo)
 	{
+		data->philos[i].last_eat = 0;
 		data->philos[i].philo_id = i + 1;
 		data->philos[i].data_back = data;
-		data->philos[i].last_eat = 0;
 		data->philos[i].died = 0;
 		data->philos[i].eat_count = -1;
 	}
