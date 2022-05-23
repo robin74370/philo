@@ -75,11 +75,11 @@ void	thread_creation(t_data *data)
 	while (++i < data->n_philo)
 		pthread_mutex_init(&data->philos[i].fork, NULL);
 	i = -1;
-	pthread_mutex_lock(&data->printing);
+//	pthread_mutex_lock(&data->printing);
 	while (++i < data->n_philo)
 		pthread_create(&data->philos[i].thread,
 			NULL, &routine, &data->philos[i]);
-	pthread_mutex_unlock(&data->printing);
+//	pthread_mutex_unlock(&data->printing);
 	check_data(data);
 	i = -1;
 	while (++i < data->n_philo)
