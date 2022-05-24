@@ -29,6 +29,7 @@ typedef struct s_philo
 	int				eat_count;
 	int				died;
 	pthread_mutex_t	fork;
+	pthread_mutex_t	last_eat_m;
 	t_data			*data_back;
 }	t_philo;
 
@@ -44,6 +45,7 @@ struct s_data
 	int				number_eat_each_philo;
 	int				num_each_philo_count;
 	int				booleen_died;
+	pthread_mutex_t	booleen_died_mutex;
 	pthread_mutex_t	eating;
 	pthread_mutex_t	printing;
 };

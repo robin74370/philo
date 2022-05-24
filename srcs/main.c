@@ -16,10 +16,10 @@ void	printing(int code, t_philo *philo)
 {
 	unsigned long long	time;
 
-	pthread_mutex_lock(&philo->data_back->printing);
+	pthread_mutex_lock(&philo->data_back->booleen_died_mutex);
 	if (philo->data_back->booleen_died)
 	{
-		pthread_mutex_unlock(&philo->data_back->printing);
+		pthread_mutex_unlock(&philo->data_back->booleen_died_mutex);
 		return ;
 	}
 	time = calcul_ms();
@@ -36,7 +36,7 @@ void	printing(int code, t_philo *philo)
 		printf("%llu %d died\n", time, philo->philo_id);
 		philo->data_back->booleen_died = 1;
 	}
-	pthread_mutex_unlock(&philo->data_back->printing);
+	pthread_mutex_unlock(&philo->data_back->booleen_died_mutex);
 }
 
 void	check_data(t_data *data)
@@ -49,20 +49,26 @@ void	check_data(t_data *data)
 		if (i == data->n_philo)
 			i = 0;
 		usleep(200);
+		pthread_mutex_lock(&data->philos[i].last_eat_m);
 		if (calcul_ms() - data->philos[i].last_eat >= data->time_to_die)
 		{
-//			pthread_mutex_unlock(&data->philos[i].fork);
-//			pthread_mutex_unlock(&data->philos[i + 1].fork);
 			printing(5, &data->philos[i]);
-			free_and_destroy(data);
+			pthread_mutex_unlock(&data->philos[i].last_eat_m);
+		//	free_and_destroy(data);
+			exit(0);
 		}
+		pthread_mutex_unlock(&data->philos[i].last_eat_m);
 		if (data->number_eat_each_philo != -1)
 		{
 			if (data->philos[i].eat_count == data->number_eat_each_philo)
 				data->num_each_philo_count++;
 		}
+//		printf("%d\n", data->number_eat_each_philo);
 		if (data->num_each_philo_count == data->number_eat_each_philo)
-			free_and_destroy(data);
+		{
+		//	free_and_destroy(data);
+			exit(0);
+		}
 	}
 }
 
@@ -70,16 +76,21 @@ void	thread_creation(t_data *data)
 {
 	int			i;
 
+	pthread_mutex_init(&data->eating, NULL);
 	pthread_mutex_init(&data->printing, NULL);
+	pthread_mutex_init(&data->booleen_died_mutex, NULL);
 	i = -1;
 	while (++i < data->n_philo)
 		pthread_mutex_init(&data->philos[i].fork, NULL);
 	i = -1;
-//	pthread_mutex_lock(&data->printing);
+	while (++i < data->n_philo)
+		pthread_mutex_init(&data->philos[i].last_eat_m, NULL);
+	i = -1;
+	pthread_mutex_lock(&data->printing);
 	while (++i < data->n_philo)
 		pthread_create(&data->philos[i].thread,
 			NULL, &routine, &data->philos[i]);
-//	pthread_mutex_unlock(&data->printing);
+	pthread_mutex_unlock(&data->printing);
 	check_data(data);
 	i = -1;
 	while (++i < data->n_philo)
@@ -124,5 +135,5 @@ int	main(int ac, char **av)
 		my_error_message("Incorrect inputs\n");
 	init_struct(&data, ac, av);
 	thread_creation(&data);
-	free_and_destroy(&data);
+	//free_and_destroy(&data);
 }

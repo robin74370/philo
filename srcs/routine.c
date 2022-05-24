@@ -18,7 +18,8 @@ void	is_thinking(t_philo *philo)
 }
 
 void	is_eating(t_philo *philo)
-{	
+{
+//	pthread_mutex_lock(&philo->data_back->eating);
 	pthread_mutex_lock(&philo->fork);
 	printing(1, philo);
 	if (philo->philo_id == philo->data_back->n_philo)
@@ -27,13 +28,16 @@ void	is_eating(t_philo *philo)
 		pthread_mutex_lock(&philo->data_back->philos[philo->philo_id].fork);
 	printing(2, philo);
 	philo->eat_count++;
+	pthread_mutex_lock(&philo->last_eat_m);
 	philo->last_eat = calcul_ms();
+	pthread_mutex_unlock(&philo->last_eat_m);
 	usleep(philo->data_back->time_to_eat * 1000);
 	pthread_mutex_unlock(&philo->fork);
 	if (philo->philo_id == philo->data_back->n_philo)
 		pthread_mutex_unlock(&philo->data_back->philos[0].fork);
 	else
 		pthread_mutex_unlock(&philo->data_back->philos[philo->philo_id].fork);
+//	pthread_mutex_unlock(&philo->data_back->eating);
 }
 
 void	is_sleeping(t_philo *philo)
@@ -72,8 +76,12 @@ void	free_and_destroy(t_data *data)
 	i = -1;
 	 
 	while (++i < data->n_philo)
+	{
+		pthread_mutex_destroy(&data->philos[i].last_eat_m);
 		pthread_mutex_destroy(&data->philos[i].fork);
-	pthread_mutex_destroy(&data->printing);
+	}
+	pthread_mutex_destroy(&data->booleen_died_mutex);
+	pthread_mutex_destroy(&data->eating);
 	free(data->philos);
 	exit (0);
 }
