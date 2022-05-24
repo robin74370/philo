@@ -50,23 +50,25 @@ void	check_data(t_data *data)
 			i = 0;
 		usleep(200);
 		pthread_mutex_lock(&data->philos[i].last_eat_m);
+		pthread_mutex_lock(&data->calcul_ms_mutex);
 		if (calcul_ms() - data->philos[i].last_eat >= data->time_to_die)
 		{
 			printing(5, &data->philos[i]);
 			pthread_mutex_unlock(&data->philos[i].last_eat_m);
-		//	free_and_destroy(data);
+			pthread_mutex_unlock(&data->calcul_ms_mutex);
+//			free_and_destroy(data);
 			exit(0);
 		}
+		pthread_mutex_unlock(&data->calcul_ms_mutex);
 		pthread_mutex_unlock(&data->philos[i].last_eat_m);
 		if (data->number_eat_each_philo != -1)
 		{
 			if (data->philos[i].eat_count == data->number_eat_each_philo)
 				data->num_each_philo_count++;
 		}
-//		printf("%d\n", data->number_eat_each_philo);
 		if (data->num_each_philo_count == data->number_eat_each_philo)
 		{
-		//	free_and_destroy(data);
+//			free_and_destroy(data);
 			exit(0);
 		}
 	}
@@ -77,6 +79,7 @@ void	thread_creation(t_data *data)
 	int			i;
 
 	pthread_mutex_init(&data->eating, NULL);
+	pthread_mutex_init(&data->calcul_ms_mutex, NULL);
 	pthread_mutex_init(&data->printing, NULL);
 	pthread_mutex_init(&data->booleen_died_mutex, NULL);
 	i = -1;

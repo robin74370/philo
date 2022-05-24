@@ -45,6 +45,9 @@ struct s_data
 	int				number_eat_each_philo;
 	int				num_each_philo_count;
 	int				booleen_died;
+
+	pthread_mutex_t	calcul_ms_mutex;
+
 	pthread_mutex_t	booleen_died_mutex;
 	pthread_mutex_t	eating;
 	pthread_mutex_t	printing;
