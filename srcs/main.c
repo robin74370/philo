@@ -22,9 +22,9 @@ void	printing(int code, t_philo *philo)
 		pthread_mutex_unlock(&philo->data_back->booleen_died_mutex);
 		return ;
 	}
-//	pthread_mutex_lock(&philo->data_back->calcul_ms_mutex);
+	pthread_mutex_lock(&philo->data_back->calcul_ms_mutex);
 	time = calcul_ms();
-//	pthread_mutex_unlock(&philo->data_back->calcul_ms_mutex);
+	pthread_mutex_unlock(&philo->data_back->calcul_ms_mutex);
 	if (code == 1)
 		printf("%llu %d has taken a fork\n", time, philo->philo_id);
 	if (code == 2)
@@ -80,7 +80,6 @@ void	thread_creation(t_data *data)
 {
 	int			i;
 
-	pthread_mutex_init(&data->eating, NULL);
 	pthread_mutex_init(&data->calcul_ms_mutex, NULL);
 	pthread_mutex_init(&data->printing, NULL);
 	pthread_mutex_init(&data->booleen_died_mutex, NULL);

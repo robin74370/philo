@@ -35,9 +35,7 @@ void	is_eating(t_philo *philo)
 	pthread_mutex_lock(&philo->last_eat_m);
 	philo->last_eat = calcul_ms();
 	pthread_mutex_unlock(&philo->last_eat_m);
-//	pthread_mutex_lock(&philo->data_back->eating);
 	usleep(philo->data_back->time_to_eat * 1000);
-//	pthread_mutex_unlock(&philo->data_back->eating);
 	philo->eat_count++;
 	if (philo->philo_id != 1)
 		pthread_mutex_unlock(&philo->fork);
