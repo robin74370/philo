@@ -23,9 +23,15 @@ void	is_eating(t_philo *philo)
 	pthread_mutex_lock(&philo->fork);
 	printing(1, philo);
 	if (philo->philo_id == philo->data_back->n_philo)
+	{
 		pthread_mutex_lock(&philo->data_back->philos[0].fork);
+		printing(1, philo);
+	}
 	else
+	{
 		pthread_mutex_lock(&philo->data_back->philos[philo->philo_id].fork);
+		printing(1, philo);
+	}
 	printing(2, philo);
 	philo->eat_count++;
 	pthread_mutex_lock(&philo->last_eat_m);

@@ -59,8 +59,8 @@ void	check_data(t_data *data)
 //			free_and_destroy(data);
 			exit(0);
 		}
-		pthread_mutex_unlock(&data->calcul_ms_mutex);
 		pthread_mutex_unlock(&data->philos[i].last_eat_m);
+		pthread_mutex_unlock(&data->calcul_ms_mutex);
 		if (data->number_eat_each_philo != -1)
 		{
 			if (data->philos[i].eat_count == data->number_eat_each_philo)
