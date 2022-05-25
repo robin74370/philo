@@ -19,31 +19,36 @@ void	is_thinking(t_philo *philo)
 
 void	is_eating(t_philo *philo)
 {
-//	pthread_mutex_lock(&philo->data_back->eating);
-	pthread_mutex_lock(&philo->fork);
+	if (philo->philo_id != 1)
+		pthread_mutex_lock(&philo->fork);
+	else
+		pthread_mutex_lock(&philo->data_back->philos[philo->philo_id].fork);
 	printing(1, philo);
 	if (philo->philo_id == philo->data_back->n_philo)
-	{
 		pthread_mutex_lock(&philo->data_back->philos[0].fork);
-		printing(1, philo);
-	}
+	else if (philo->philo_id == 1)
+		pthread_mutex_lock(&philo->data_back->philos[philo->philo_id - 1].fork);
 	else
-	{
 		pthread_mutex_lock(&philo->data_back->philos[philo->philo_id].fork);
-		printing(1, philo);
-	}
+	printing(1, philo);
 	printing(2, philo);
-	philo->eat_count++;
 	pthread_mutex_lock(&philo->last_eat_m);
 	philo->last_eat = calcul_ms();
 	pthread_mutex_unlock(&philo->last_eat_m);
+//	pthread_mutex_lock(&philo->data_back->eating);
 	usleep(philo->data_back->time_to_eat * 1000);
-	pthread_mutex_unlock(&philo->fork);
-	if (philo->philo_id == philo->data_back->n_philo)
-		pthread_mutex_unlock(&philo->data_back->philos[0].fork);
+//	pthread_mutex_unlock(&philo->data_back->eating);
+	philo->eat_count++;
+	if (philo->philo_id != 1)
+		pthread_mutex_unlock(&philo->fork);
 	else
 		pthread_mutex_unlock(&philo->data_back->philos[philo->philo_id].fork);
-//	pthread_mutex_unlock(&philo->data_back->eating);
+	if (philo->philo_id == philo->data_back->n_philo)
+		pthread_mutex_unlock(&philo->data_back->philos[0].fork);
+	else if (philo->philo_id == 1)
+		pthread_mutex_unlock(&philo->data_back->philos[philo->philo_id - 1].fork);
+	else
+		pthread_mutex_unlock(&philo->data_back->philos[philo->philo_id].fork);
 }
 
 void	is_sleeping(t_philo *philo)
@@ -70,7 +75,7 @@ void	*routine(void *philo)
 		is_sleeping(tmp);
 		is_thinking(tmp);
 //		if (tmp->philo_id % 2 != 0)
-//			usleep(100);
+//			usleep(200);
 	}
 	return (NULL);
 }
