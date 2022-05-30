@@ -47,11 +47,10 @@ struct s_data
 	int				booleen_died;
 	pthread_mutex_t	calcul_ms_mutex;
 	pthread_mutex_t	booleen_died_mutex;
-	pthread_mutex_t	eating;
 	pthread_mutex_t	printing;
 };
 
-long				calcul_ms(void);
+long				calcul_ms(t_data *data);
 int					ft_atoi(const char *nptr);
 void				ft_putstr_fd(char *str, int fd);
 void				my_error_message(char *message);
@@ -61,6 +60,8 @@ void				is_sleeping(t_philo *philo);
 void				*routine(void *philo);
 void				printing(int code, t_philo *philo);
 void				free_and_destroy(t_data *data);
+void				unlock_fork(t_philo *philo);
+void				lock_fork(t_philo *philo);
 unsigned long long	time_conversion(void);
 
 #endif

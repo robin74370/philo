@@ -22,9 +22,7 @@ void	printing(int code, t_philo *philo)
 		pthread_mutex_unlock(&philo->data_back->booleen_died_mutex);
 		return ;
 	}
-	pthread_mutex_lock(&philo->data_back->calcul_ms_mutex);
-	time = calcul_ms();
-	pthread_mutex_unlock(&philo->data_back->calcul_ms_mutex);
+	time = calcul_ms(philo->data_back);
 	if (code == 1)
 		printf("%llu %d has taken a fork\n", time, philo->philo_id);
 	if (code == 2)
@@ -50,29 +48,29 @@ void	check_data(t_data *data)
 	{
 		if (i == data->n_philo)
 			i = 0;
-		usleep(200);
+		usleep(100);
 		pthread_mutex_lock(&data->philos[i].last_eat_m);
-//		pthread_mutex_lock(&data->calcul_ms_mutex);
-		if (calcul_ms() - data->philos[i].last_eat >= data->time_to_die)
+		if (calcul_ms(data) - data->philos[i].last_eat >= data->time_to_die)
 		{
 			printing(5, &data->philos[i]);
 			pthread_mutex_unlock(&data->philos[i].last_eat_m);
-//			pthread_mutex_unlock(&data->calcul_ms_mutex);
 //			free_and_destroy(data);
-			exit(0);
+			exit(-42);
 		}
-		pthread_mutex_unlock(&data->philos[i].last_eat_m);
-//		pthread_mutex_unlock(&data->calcul_ms_mutex);
 		if (data->number_eat_each_philo != -1)
 		{
+		//	pthread_mutex_lock(&data->booleen_died_mutex);
 			if (data->philos[i].eat_count == data->number_eat_each_philo)
 				data->num_each_philo_count++;
+		//	pthread_mutex_unlock(&data->booleen_died_mutex);
 		}
 		if (data->num_each_philo_count == data->number_eat_each_philo)
 		{
 //			free_and_destroy(data);
-			exit(0);
+			pthread_mutex_unlock(&data->philos[i].last_eat_m);
+			exit(-42);
 		}
+		pthread_mutex_unlock(&data->philos[i].last_eat_m);
 	}
 }
 
@@ -81,14 +79,15 @@ void	thread_creation(t_data *data)
 	int			i;
 
 	pthread_mutex_init(&data->calcul_ms_mutex, NULL);
+//	pthread_mutex_init(&data->usleep_m, NULL);
 	pthread_mutex_init(&data->printing, NULL);
 	pthread_mutex_init(&data->booleen_died_mutex, NULL);
 	i = -1;
 	while (++i < data->n_philo)
+	{
 		pthread_mutex_init(&data->philos[i].fork, NULL);
-	i = -1;
-	while (++i < data->n_philo)
 		pthread_mutex_init(&data->philos[i].last_eat_m, NULL);
+	}
 	i = -1;
 	pthread_mutex_lock(&data->printing);
 	while (++i < data->n_philo)
@@ -139,5 +138,5 @@ int	main(int ac, char **av)
 		my_error_message("Incorrect inputs\n");
 	init_struct(&data, ac, av);
 	thread_creation(&data);
-	//free_and_destroy(&data);
+//	free_and_destroy(&data);
 }
