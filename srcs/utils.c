@@ -16,10 +16,11 @@ long	calcul_ms(t_data *data)
 {
 	static long		start;
 
-	pthread_mutex_lock(&data->calcul_ms_mutex);
+	(void)data;
+//	pthread_mutex_lock(&data->calcul_ms_mutex);
 	if (!start)
 		start = time_conversion();
-	pthread_mutex_unlock(&data->calcul_ms_mutex);
+//	pthread_mutex_unlock(&data->calcul_ms_mutex);
 	return (time_conversion() - start);
 }
 

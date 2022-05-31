@@ -48,6 +48,7 @@ struct s_data
 	pthread_mutex_t	calcul_ms_mutex;
 	pthread_mutex_t	booleen_died_mutex;
 	pthread_mutex_t	printing;
+	pthread_mutex_t	waiting;
 };
 
 long				calcul_ms(t_data *data);

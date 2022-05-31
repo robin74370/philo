@@ -19,6 +19,8 @@ void	is_thinking(t_philo *philo)
 
 void	lock_fork(t_philo *philo)
 {
+	if (philo->data_back->n_philo == 1)
+		pthread_mutex_lock(&philo->fork);
 	if (philo->philo_id != 1)
 		pthread_mutex_lock(&philo->fork);
 	else
@@ -30,6 +32,7 @@ void	lock_fork(t_philo *philo)
 		pthread_mutex_lock(&philo->data_back->philos[philo->philo_id - 1].fork);
 	else
 		pthread_mutex_lock(&philo->data_back->philos[philo->philo_id].fork);
+	printing(1, philo);
 }
 
 void	unlock_fork(t_philo *philo)
@@ -48,15 +51,20 @@ void	unlock_fork(t_philo *philo)
 
 void	is_eating(t_philo *philo)
 {
-	lock_fork(philo);
-	printing(1, philo);
-	printing(2, philo);
+	pthread_mutex_lock(&philo->data_back->waiting);
 	pthread_mutex_lock(&philo->last_eat_m);
+	lock_fork(philo);
+	printing(2, philo);
+	pthread_mutex_lock(&philo->data_back->calcul_ms_mutex);
 	philo->last_eat = calcul_ms(philo->data_back);
+	pthread_mutex_unlock(&philo->data_back->calcul_ms_mutex);
 	unlock_fork(philo);
+//	pthread_mutex_lock(&philo->last_eat_m);
 	usleep(philo->data_back->time_to_eat * 1000);
+//	pthread_mutex_unlock(&philo->last_eat_m);
 	philo->eat_count++;
 	pthread_mutex_unlock(&philo->last_eat_m);
+	pthread_mutex_unlock(&philo->data_back->waiting);
 }
 
 void	is_sleeping(t_philo *philo)
@@ -74,8 +82,8 @@ void	*routine(void *philo)
 	pthread_mutex_unlock(&tmp->data_back->printing);
 	if (tmp->philo_id % 2 == 0)
 		usleep(tmp->data_back->time_to_eat * 1000);
-//	else if (tmp->data_back->n_philo % 2 == 1)
-//		usleep(tmp->data_back->time_to_eat * (tmp->philo_id % 3));
+	else if (tmp->data_back->n_philo % 2 == 1)
+		usleep(tmp->data_back->time_to_eat * (tmp->philo_id % 3));
 //	tmp->last_eat = calcul_ms();
 	while (1)
 	{
@@ -92,21 +100,29 @@ void	free_and_destroy(t_data *data)
 {
 	int	i;
 
+//	pthread_mutex_lock(&data->waiting);
+//	pthread_mutex_unlock(&data->waiting);
 //	i = -1;
 //	while (++i < data->n_philo)
 //		pthread_join(data->philos[i].thread, NULL);
-//	i = -1;
-//	while (++i < data->n_philo)
-//		unlock_fork(&data->philos[i]);
 	i = -1;
 	while (++i < data->n_philo)
 	{
-		pthread_mutex_destroy(&data->philos[i].last_eat_m);
+	//	unlock_fork(&data->philos[i]);
+	//	pthread_mutex_unlock(&data->philos[i].fork);
+	//	pthread_mutex_unlock(&data->philos[i].last_eat_m);
+	//	pthread_mutex_unlock(&data->philos[i].fork);
+		
+	}
+	i = -1;
+	while (++i < data->n_philo)
+	{
+	//	pthread_mutex_destroy(&data->philos[i].last_eat_m);
 		pthread_mutex_destroy(&data->philos[i].fork);
 	}
 	pthread_mutex_destroy(&data->booleen_died_mutex);
-	pthread_mutex_destroy(&data->calcul_ms_mutex);
 	pthread_mutex_destroy(&data->printing);
-	free(data->philos);
+	pthread_mutex_destroy(&data->calcul_ms_mutex);
+//	free(data->philos);
 	exit (-42);
 }
