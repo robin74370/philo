@@ -36,7 +36,9 @@ void	printing(int code, t_philo *philo)
 	if (code == 5)
 	{
 		printf("%llu %d died\n", time, philo->philo_id);
+		pthread_mutex_lock(&philo->data_back->booleen_died_mutex);
 		philo->data_back->booleen_died = 1;
+		pthread_mutex_unlock(&philo->data_back->booleen_died_mutex);
 	}
 //	pthread_mutex_unlock(&philo->data_back->booleen_died_mutex);
 }
@@ -53,6 +55,8 @@ void	check_data(t_data *data)
 		usleep(100);
 	//	pthread_mutex_lock(&data->philos[i].last_eat_m);
 		pthread_mutex_lock(&data->calcul_ms_mutex);
+//		if (data->booleen_died == 1)
+//			return ;
 		if (calcul_ms(data) - data->philos[i].last_eat >= data->time_to_die)
 		{
 			pthread_mutex_unlock(&data->calcul_ms_mutex);
@@ -60,8 +64,7 @@ void	check_data(t_data *data)
 			pthread_mutex_unlock(&data->waiting);
 		//	pthread_mutex_unlock(&data->philos[i].fork);
 			printing(5, &data->philos[i]);
-			free_and_destroy(data);
-		//	exit(-42);
+			return ;
 		}
 		if (data->number_eat_each_philo != -1)
 		{
@@ -74,13 +77,14 @@ void	check_data(t_data *data)
 		}
 		if (data->num_each_philo_count == data->number_eat_each_philo)
 		{
-		//	usleep(data->time_to_eat * 1000);
-		//	pthread_mutex_unlock(&data->calcul_ms_mutex);
+			pthread_mutex_lock(&data->booleen_died_mutex);
+			data->booleen_died = 1;
+			pthread_mutex_unlock(&data->booleen_died_mutex);		
 			pthread_mutex_lock(&data->waiting);
 			pthread_mutex_unlock(&data->waiting);
 			pthread_mutex_unlock(&data->calcul_ms_mutex);
-			free_and_destroy(data);
-		//	exit(-42);
+		//	free_and_destroy(data);
+			return ;
 		}
 		pthread_mutex_unlock(&data->calcul_ms_mutex);
 	//	pthread_mutex_unlock(&data->philos[i].last_eat_m);
@@ -111,6 +115,7 @@ void	thread_creation(t_data *data)
 	i = -1;
 	while (++i < data->n_philo)
 		pthread_join(data->philos[i].thread, NULL);
+	free_and_destroy(data);
 }
 
 void	init_struct(t_data *data, int ac, char **av)
@@ -152,4 +157,5 @@ int	main(int ac, char **av)
 	init_struct(&data, ac, av);
 	thread_creation(&data);
 //	free_and_destroy(&data);
+	return (0);
 }

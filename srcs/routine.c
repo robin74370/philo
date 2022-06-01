@@ -14,6 +14,13 @@
 
 void	is_thinking(t_philo *philo)
 {
+	pthread_mutex_lock(&philo->data_back->booleen_died_mutex);
+	if (philo->data_back->booleen_died == 1)
+	{
+		pthread_mutex_unlock(&philo->data_back->booleen_died_mutex);
+		return ;
+	}
+	pthread_mutex_unlock(&philo->data_back->booleen_died_mutex);
 	printing(4, philo);
 }
 
@@ -37,6 +44,8 @@ void	lock_fork(t_philo *philo)
 
 void	unlock_fork(t_philo *philo)
 {
+//	if (philo->data_back->n_philo == 1)
+//		pthread_mutex_unlock(&philo->fork);
 	if (philo->philo_id != 1)
 		pthread_mutex_unlock(&philo->fork);
 	else
@@ -58,6 +67,15 @@ void	is_eating(t_philo *philo)
 		free_and_destroy(philo->data_back);
 		return ;
 	}*/
+//	if (philo->data_back->booleen_died == 1)
+//		return ;
+	pthread_mutex_lock(&philo->data_back->booleen_died_mutex);
+	if (philo->data_back->booleen_died == 1)
+	{
+		pthread_mutex_unlock(&philo->data_back->booleen_died_mutex);
+		return ;
+	}
+	pthread_mutex_unlock(&philo->data_back->booleen_died_mutex);
 //	pthread_mutex_lock(&philo->data_back->waiting);
 //	pthread_mutex_lock(&philo->last_eat_m);
 	lock_fork(philo);
@@ -76,6 +94,13 @@ void	is_eating(t_philo *philo)
 
 void	is_sleeping(t_philo *philo)
 {
+	pthread_mutex_lock(&philo->data_back->booleen_died_mutex);
+	if (philo->data_back->booleen_died == 1)
+	{
+		pthread_mutex_unlock(&philo->data_back->booleen_died_mutex);
+		return ;
+	}
+	pthread_mutex_unlock(&philo->data_back->booleen_died_mutex);
 	printing(3, philo);
 	usleep(philo->data_back->time_to_sleep * 1000);
 }
@@ -94,6 +119,8 @@ void	*routine(void *philo)
 //	tmp->last_eat = calcul_ms();
 	while (1)
 	{
+		if (tmp->data_back->booleen_died == 1)
+			break ;
 		is_eating(tmp);
 		is_sleeping(tmp);
 		is_thinking(tmp);
@@ -107,26 +134,18 @@ void	free_and_destroy(t_data *data)
 {
 	int	i;
 
+	usleep(500);
 	pthread_mutex_lock(&data->waiting);
 	pthread_mutex_unlock(&data->waiting);
-//	i = -1;
-//	while (++i < data->n_philo)
-//	{
-	//	unlock_fork(&data->philos[i]);
-	//	pthread_mutex_unlock(&data->philos[i].fork);
-	//	pthread_mutex_unlock(&data->philos[i].last_eat_m);
-	//	pthread_mutex_unlock(&data->philos[i].fork);
-		
-//	}
 	i = -1;
 	while (++i < data->n_philo)
 	{
-	//	pthread_mutex_destroy(&data->philos[i].last_eat_m);
+		pthread_mutex_destroy(&data->philos[i].last_eat_m);
 	//	pthread_mutex_destroy(&data->philos[i].fork);
 	}
 	pthread_mutex_destroy(&data->booleen_died_mutex);
 	pthread_mutex_destroy(&data->printing);
 	pthread_mutex_destroy(&data->calcul_ms_mutex);
 	free(data->philos);
-	exit (-42);
+//	exit (-42);
 }
