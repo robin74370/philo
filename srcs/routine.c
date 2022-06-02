@@ -21,31 +21,33 @@ void	is_thinking(t_philo *philo)
 		return ;
 	}
 	pthread_mutex_unlock(&philo->data_back->booleen_died_mutex);
+	pthread_mutex_lock(&philo->data_back->printing);
 	printing(4, philo);
+	pthread_mutex_unlock(&philo->data_back->printing);
 }
 
 void	lock_fork(t_philo *philo)
 {
-	if (philo->data_back->n_philo == 1)
-		pthread_mutex_lock(&philo->fork);
 	if (philo->philo_id != 1)
 		pthread_mutex_lock(&philo->fork);
 	else
 		pthread_mutex_lock(&philo->data_back->philos[philo->philo_id].fork);
+	pthread_mutex_lock(&philo->data_back->printing);
 	printing(1, philo);
+	pthread_mutex_unlock(&philo->data_back->printing);
 	if (philo->philo_id == philo->data_back->n_philo)
 		pthread_mutex_lock(&philo->data_back->philos[0].fork);
 	else if (philo->philo_id == 1)
 		pthread_mutex_lock(&philo->data_back->philos[philo->philo_id - 1].fork);
 	else
 		pthread_mutex_lock(&philo->data_back->philos[philo->philo_id].fork);
+	pthread_mutex_lock(&philo->data_back->printing);
 	printing(1, philo);
+	pthread_mutex_unlock(&philo->data_back->printing);
 }
 
 void	unlock_fork(t_philo *philo)
 {
-//	if (philo->data_back->n_philo == 1)
-//		pthread_mutex_unlock(&philo->fork);
 	if (philo->philo_id != 1)
 		pthread_mutex_unlock(&philo->fork);
 	else
@@ -59,16 +61,7 @@ void	unlock_fork(t_philo *philo)
 }
 
 void	is_eating(t_philo *philo)
-{/*
-	if (philo->data_back->n_philo == 1)
-	{
-		printing(1, philo);
-		usleep(philo->data_back->time_to_eat * 1000);
-		free_and_destroy(philo->data_back);
-		return ;
-	}*/
-//	if (philo->data_back->booleen_died == 1)
-//		return ;
+{
 	pthread_mutex_lock(&philo->data_back->booleen_died_mutex);
 	if (philo->data_back->booleen_died == 1)
 	{
@@ -76,10 +69,10 @@ void	is_eating(t_philo *philo)
 		return ;
 	}
 	pthread_mutex_unlock(&philo->data_back->booleen_died_mutex);
-//	pthread_mutex_lock(&philo->data_back->waiting);
-//	pthread_mutex_lock(&philo->last_eat_m);
 	lock_fork(philo);
+	pthread_mutex_lock(&philo->data_back->printing);
 	printing(2, philo);
+	pthread_mutex_unlock(&philo->data_back->printing);
 	pthread_mutex_lock(&philo->data_back->calcul_ms_mutex);
 	philo->last_eat = calcul_ms(philo->data_back);
 	pthread_mutex_unlock(&philo->data_back->calcul_ms_mutex);
@@ -88,8 +81,6 @@ void	is_eating(t_philo *philo)
 	pthread_mutex_lock(&philo->last_eat_m);
 	philo->eat_count++;
 	pthread_mutex_unlock(&philo->last_eat_m);
-//	pthread_mutex_unlock(&philo->last_eat_m);
-//	pthread_mutex_unlock(&philo->data_back->waiting);
 }
 
 void	is_sleeping(t_philo *philo)
@@ -101,7 +92,9 @@ void	is_sleeping(t_philo *philo)
 		return ;
 	}
 	pthread_mutex_unlock(&philo->data_back->booleen_died_mutex);
+	pthread_mutex_lock(&philo->data_back->printing);
 	printing(3, philo);
+	pthread_mutex_unlock(&philo->data_back->printing);
 	usleep(philo->data_back->time_to_sleep * 1000);
 }
 
@@ -116,11 +109,12 @@ void	*routine(void *philo)
 		usleep(tmp->data_back->time_to_eat * 1000);
 	else if (tmp->data_back->n_philo % 2 == 1)
 		usleep(tmp->data_back->time_to_eat * (tmp->philo_id % 3));
-//	tmp->last_eat = calcul_ms();
 	while (1)
 	{
+	//	pthread_mutex_lock(&tmp->data_back->booleen_died_mutex);
 		if (tmp->data_back->booleen_died == 1)
-			break ;
+			return (NULL) ;
+	//	pthread_mutex_unlock(&tmp->data_back->booleen_died_mutex);
 		is_eating(tmp);
 		is_sleeping(tmp);
 		is_thinking(tmp);

@@ -51,18 +51,19 @@ struct s_data
 	pthread_mutex_t	waiting;
 };
 
+unsigned long long	time_conversion(void);
+void				ft_clear(char **av);
+void				*routine(void *philo);
 long				calcul_ms(t_data *data);
+void				is_eating(t_philo *philo);
+void				lock_fork(t_philo *philo);
 int					ft_atoi(const char *nptr);
+void				unlock_fork(t_philo *philo);
+void				is_thinking(t_philo *philo);
+void				is_sleeping(t_philo *philo);
+void				free_and_destroy(t_data *data);
 void				ft_putstr_fd(char *str, int fd);
 void				my_error_message(char *message);
-void				is_thinking(t_philo *philo);
-void				is_eating(t_philo *philo);
-void				is_sleeping(t_philo *philo);
-void				*routine(void *philo);
 void				printing(int code, t_philo *philo);
-void				free_and_destroy(t_data *data);
-void				unlock_fork(t_philo *philo);
-void				lock_fork(t_philo *philo);
-unsigned long long	time_conversion(void);
 
 #endif

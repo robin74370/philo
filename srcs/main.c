@@ -59,11 +59,15 @@ void	check_data(t_data *data)
 //			return ;
 		if (calcul_ms(data) - data->philos[i].last_eat >= data->time_to_die)
 		{
+			pthread_mutex_lock(&data->booleen_died_mutex);
+			data->booleen_died = 1;
+			pthread_mutex_unlock(&data->booleen_died_mutex);
 			pthread_mutex_unlock(&data->calcul_ms_mutex);
 			pthread_mutex_lock(&data->waiting);
 			pthread_mutex_unlock(&data->waiting);
-		//	pthread_mutex_unlock(&data->philos[i].fork);
+			pthread_mutex_lock(&data->printing);
 			printing(5, &data->philos[i]);
+			pthread_mutex_unlock(&data->printing);
 			return ;
 		}
 		if (data->number_eat_each_philo != -1)
@@ -75,7 +79,7 @@ void	check_data(t_data *data)
 			pthread_mutex_unlock(&data->philos[i].last_eat_m);
 		//	pthread_mutex_unlock(&data->booleen_died_mutex);
 		}
-		if (data->num_each_philo_count == data->number_eat_each_philo)
+		if (data->num_each_philo_count == data->n_philo)
 		{
 			pthread_mutex_lock(&data->booleen_died_mutex);
 			data->booleen_died = 1;
@@ -112,19 +116,24 @@ void	thread_creation(t_data *data)
 			NULL, &routine, &data->philos[i]);
 	pthread_mutex_unlock(&data->printing);
 	check_data(data);
+//	if (data->n_philo == 1)
+//	{
+	//	pthread_join(data->philos[i].thread, NULL);
+//		free_and_destroy(data);
+//	}
 	i = -1;
 	while (++i < data->n_philo)
 		pthread_join(data->philos[i].thread, NULL);
 	free_and_destroy(data);
 }
 
-void	init_struct(t_data *data, int ac, char **av)
+int	init_struct(t_data *data, int ac, char **av)
 {
 	int	i;
 
 	data->philos = malloc((data->n_philo) * sizeof(t_philo));
 	if (!data->philos)
-		return ;
+		return (0);
 	data->time_to_die = ft_atoi(av[2]);
 	data->time_to_eat = ft_atoi(av[3]);
 	data->time_to_sleep = ft_atoi(av[4]);
@@ -143,19 +152,28 @@ void	init_struct(t_data *data, int ac, char **av)
 	}
 	data->num_each_philo_count = 0;
 	data->booleen_died = 0;
+	return (0);
 }
 
 int	main(int ac, char **av)
 {	
 	t_data	data;
 
+	if (ft_atoi(av[1]) == 1)
+	{
+		ft_clear(av);
+		return (0);
+	}
+	if (ac == 6 && ft_atoi(av[5]) == 0)
+		return (0);
 	if (!(ac >= 5 && ac <= 6))
 		my_error_message("Wrong number of arguments\n");
 	data.n_philo = atoi(av[1]);
 	if (data.n_philo < 1)
 		my_error_message("Incorrect inputs\n");
-	init_struct(&data, ac, av);
-	thread_creation(&data);
-//	free_and_destroy(&data);
+	if (init_struct(&data, ac, av) == 1)
+		return (0);
+	if (data.n_philo != 1)
+		thread_creation(&data);
 	return (0);
 }
