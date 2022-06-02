@@ -16,12 +16,6 @@ void	printing(int code, t_philo *philo)
 {
 	unsigned long long	time;
 
-//	pthread_mutex_lock(&philo->data_back->booleen_died_mutex);
-//	if (philo->data_back->booleen_died)
-//	{
-//		pthread_mutex_unlock(&philo->data_back->booleen_died_mutex);
-//		return ;
-//	}
 	pthread_mutex_lock(&philo->data_back->calcul_ms_mutex);
 	time = calcul_ms(philo->data_back);
 	pthread_mutex_unlock(&philo->data_back->calcul_ms_mutex);
@@ -40,7 +34,6 @@ void	printing(int code, t_philo *philo)
 		philo->data_back->booleen_died = 1;
 		pthread_mutex_unlock(&philo->data_back->booleen_died_mutex);
 	}
-//	pthread_mutex_unlock(&philo->data_back->booleen_died_mutex);
 }
 
 void	check_data(t_data *data)
@@ -53,10 +46,7 @@ void	check_data(t_data *data)
 		if (i == data->n_philo)
 			i = 0;
 		usleep(100);
-	//	pthread_mutex_lock(&data->philos[i].last_eat_m);
 		pthread_mutex_lock(&data->calcul_ms_mutex);
-//		if (data->booleen_died == 1)
-//			return ;
 		if (calcul_ms(data) - data->philos[i].last_eat >= data->time_to_die)
 		{
 			pthread_mutex_lock(&data->booleen_died_mutex);
@@ -72,26 +62,22 @@ void	check_data(t_data *data)
 		}
 		if (data->number_eat_each_philo != -1)
 		{
-		//	pthread_mutex_lock(&data->booleen_died_mutex);
 			pthread_mutex_lock(&data->philos[i].last_eat_m);
 			if (data->philos[i].eat_count == data->number_eat_each_philo)
 				data->num_each_philo_count++;
 			pthread_mutex_unlock(&data->philos[i].last_eat_m);
-		//	pthread_mutex_unlock(&data->booleen_died_mutex);
 		}
 		if (data->num_each_philo_count == data->n_philo)
 		{
 			pthread_mutex_lock(&data->booleen_died_mutex);
 			data->booleen_died = 1;
-			pthread_mutex_unlock(&data->booleen_died_mutex);		
+			pthread_mutex_unlock(&data->booleen_died_mutex);
 			pthread_mutex_lock(&data->waiting);
 			pthread_mutex_unlock(&data->waiting);
 			pthread_mutex_unlock(&data->calcul_ms_mutex);
-		//	free_and_destroy(data);
 			return ;
 		}
 		pthread_mutex_unlock(&data->calcul_ms_mutex);
-	//	pthread_mutex_unlock(&data->philos[i].last_eat_m);
 	}
 }
 
@@ -116,11 +102,6 @@ void	thread_creation(t_data *data)
 			NULL, &routine, &data->philos[i]);
 	pthread_mutex_unlock(&data->printing);
 	check_data(data);
-//	if (data->n_philo == 1)
-//	{
-	//	pthread_join(data->philos[i].thread, NULL);
-//		free_and_destroy(data);
-//	}
 	i = -1;
 	while (++i < data->n_philo)
 		pthread_join(data->philos[i].thread, NULL);

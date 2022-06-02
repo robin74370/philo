@@ -11,27 +11,14 @@
 /* ************************************************************************** */
 
 #include "philo.h"
-/*
-void	ft_usleep(long long time)
-{
-	long long int	t;
-
-	t = calcul_ms();
-	while (t + time >= time_conversion)
-	{
-		usleep(50);
-	}
-}*/
 
 long	calcul_ms(t_data *data)
 {
 	static long		start;
 
 	(void)data;
-//	pthread_mutex_lock(&data->calcul_ms_mutex);
 	if (!start)
 		start = time_conversion();
-//	pthread_mutex_unlock(&data->calcul_ms_mutex);
 	return (time_conversion() - start);
 }
 
@@ -59,12 +46,6 @@ void	ft_clear(char **av)
 	printf("0 1 has taken a fork\n");
 	usleep(ft_atoi(av[2]) * 1000);
 	printf("%d 1 died\n", ft_atoi(av[2]) + 1);
-}
-
-void	my_error_message(char *message)
-{
-	ft_putstr_fd(message, 1);
-	exit(-42);
 }
 
 int	ft_atoi(const char *nptr)
