@@ -40,7 +40,8 @@ void	unlock_fork(t_philo *philo)
 	if (philo->philo_id == philo->data_back->n_philo)
 		pthread_mutex_unlock(&philo->data_back->philos[0].fork);
 	else if (philo->philo_id == 1)
-		pthread_mutex_unlock(&philo->data_back->philos[philo->philo_id - 1].fork);
+		pthread_mutex_unlock(&philo->data_back
+			->philos[philo->philo_id - 1].fork);
 	else
 		pthread_mutex_unlock(&philo->data_back->philos[philo->philo_id].fork);
 }

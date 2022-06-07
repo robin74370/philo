@@ -77,8 +77,13 @@ void	*routine(void *philo)
 		usleep(tmp->data_back->time_to_eat * (tmp->philo_id % 3));
 	while (1)
 	{
+		pthread_mutex_lock(&tmp->data_back->booleen_died_mutex);
 		if (tmp->data_back->booleen_died == 1)
+		{
+			pthread_mutex_unlock(&tmp->data_back->booleen_died_mutex);
 			return (NULL);
+		}
+		pthread_mutex_unlock(&tmp->data_back->booleen_died_mutex);
 		is_eating(tmp);
 		is_sleeping(tmp);
 		is_thinking(tmp);

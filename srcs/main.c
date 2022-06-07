@@ -40,8 +40,8 @@ void	check_data(t_data *data)
 {
 	int	i;
 
-	i = 0;
-	while (i < data->n_philo)
+	i = -1;
+	while (++i <= data->n_philo)
 	{
 		if (i == data->n_philo)
 			i = 0;
@@ -49,32 +49,14 @@ void	check_data(t_data *data)
 		pthread_mutex_lock(&data->calcul_ms_mutex);
 		if (calcul_ms(data) - data->philos[i].last_eat >= data->time_to_die)
 		{
-			pthread_mutex_lock(&data->booleen_died_mutex);
-			data->booleen_died = 1;
-			pthread_mutex_unlock(&data->booleen_died_mutex);
-			pthread_mutex_unlock(&data->calcul_ms_mutex);
-			pthread_mutex_lock(&data->waiting);
-			pthread_mutex_unlock(&data->waiting);
-			pthread_mutex_lock(&data->printing);
-			printing(5, &data->philos[i]);
-			pthread_mutex_unlock(&data->printing);
+			check_data_2(data, i);
 			return ;
 		}
 		if (data->number_eat_each_philo != -1)
-		{
-			pthread_mutex_lock(&data->philos[i].last_eat_m);
-			if (data->philos[i].eat_count == data->number_eat_each_philo)
-				data->num_each_philo_count++;
-			pthread_mutex_unlock(&data->philos[i].last_eat_m);
-		}
+			check_died_count(data, i);
 		if (data->num_each_philo_count == data->n_philo)
 		{
-			pthread_mutex_lock(&data->booleen_died_mutex);
-			data->booleen_died = 1;
-			pthread_mutex_unlock(&data->booleen_died_mutex);
-			pthread_mutex_lock(&data->waiting);
-			pthread_mutex_unlock(&data->waiting);
-			pthread_mutex_unlock(&data->calcul_ms_mutex);
+			check_data_3(data);
 			return ;
 		}
 		pthread_mutex_unlock(&data->calcul_ms_mutex);
