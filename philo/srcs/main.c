@@ -122,15 +122,15 @@ int	main(int ac, char **av)
 {	
 	t_data	data;
 
+	if (!(ac >= 5 && ac <= 6))
+		my_error_message("Wrong number of arguments\n");
+	if (ac == 6 && ft_atoi(av[5]) == 0)
+		return (0);
 	if (ft_atoi(av[1]) == 1)
 	{
 		ft_clear(av);
 		return (0);
 	}
-	if (ac == 6 && ft_atoi(av[5]) == 0)
-		return (0);
-	if (!(ac >= 5 && ac <= 6))
-		my_error_message("Wrong number of arguments\n");
 	data.n_philo = atoi(av[1]);
 	if (data.n_philo < 1)
 		my_error_message("Incorrect inputs\n");
