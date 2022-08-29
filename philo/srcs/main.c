@@ -115,6 +115,7 @@ int	main(int ac, char **av)
 
 	if (!(ac >= 5 && ac <= 6))
 		my_error_message("Wrong number of arguments\n");
+	check_inputs(ac, av);
 	if (ac == 6 && ft_atoi(av[5]) == 0)
 		return (0);
 	if (ft_atoi(av[1]) == 1)

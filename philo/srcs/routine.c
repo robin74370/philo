@@ -39,10 +39,10 @@ void	is_eating(t_philo *philo)
 	pthread_mutex_lock(&philo->data_back->printing);
 	printing(2, philo);
 	pthread_mutex_unlock(&philo->data_back->printing);
-	usleep(philo->data_back->time_to_eat * 1000);
 	pthread_mutex_lock(&philo->data_back->calcul_ms_mutex);
 	philo->last_eat = calcul_ms(philo->data_back);
 	pthread_mutex_unlock(&philo->data_back->calcul_ms_mutex);
+	usleep(philo->data_back->time_to_eat * 1000);
 	unlock_fork(philo);
 	pthread_mutex_lock(&philo->last_eat_m);
 	philo->eat_count++;

@@ -44,3 +44,22 @@ void	check_data_3(t_data *data)
 	pthread_mutex_unlock(&data->calcul_ms_mutex);
 	return ;
 }
+
+void	check_inputs(int ac, char **av)
+{
+	int	i;
+	int	j;
+
+	i = 1;
+	while (i < ac)
+	{
+		j = 0;
+		while (av[i][j])
+		{
+			if (!(av[i][j] >= '0' && av[i][j] <= '9'))
+				my_error_message("Wrong inputs\n");
+			j++;
+		}
+		i++;
+	}
+}

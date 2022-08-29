@@ -63,11 +63,13 @@ void				unlock_fork(t_philo *philo);
 void				is_thinking(t_philo *philo);
 void				is_sleeping(t_philo *philo);
 void				free_and_destroy(t_data *data);
+void				check_inputs(int ac, char **av);
 void				ft_putstr_fd(char *str, int fd);
 void				my_error_message(char *message);
 void				check_data_2(t_data *data, int i);
 void				printing(int code, t_philo *philo);
 void				check_died_count(t_data *data, int i);
 void				affichage(int code, t_philo *philo);
+
 
 #endif

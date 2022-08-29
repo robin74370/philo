@@ -47,42 +47,6 @@ void	unlock_fork(t_philo *philo)
 		pthread_mutex_unlock(&philo->data_back->philos[philo->philo_id].fork);
 }
 
-/*
-void	lock_fork(t_philo *philo)
-{
-	pthread_mutex_lock(&philo->fork);
-	pthread_mutex_lock(&philo->data_back->printing);
-	printing(1, philo);
-	pthread_mutex_unlock(&philo->data_back->printing);
-	if (philo->philo_id == 1)
-	{
-		pthread_mutex_lock(&philo->data_back
-			->philos[philo->data_back->n_philo - 1].fork);
-		pthread_mutex_lock(&philo->data_back->printing);
-		printing(1, philo);
-		pthread_mutex_unlock(&philo->data_back->printing);
-	}
-	else
-	{
-		pthread_mutex_lock(&philo->data_back
-			->philos[philo->philo_id - 2]. fork);
-		pthread_mutex_lock(&philo->data_back->printing);
-		printing(1, philo);
-		pthread_mutex_unlock(&philo->data_back->printing);
-	}
-}
-
-void	unlock_fork(t_philo *philo)
-{
-	pthread_mutex_unlock(&philo->fork);
-	if (philo->philo_id == 1)
-		pthread_mutex_unlock(&philo->data_back
-			->philos[philo->data_back->n_philo - 1].fork);
-	else
-		pthread_mutex_unlock(&philo->data_back
-			->philos[philo->philo_id - 2]. fork);
-}
-*/
 void	free_and_destroy(t_data *data)
 {
 	int	i;
