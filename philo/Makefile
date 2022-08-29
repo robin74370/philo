@@ -10,7 +10,6 @@ SRCS		=	main.c\
 SRC_BASENAME    =    $(addprefix $(SRC_DIR), $(SRCS))
 OBJS            =    $(SRC_BASENAME:.c=.o)
 		CC		=	gcc
-#		FLAGS	=	-Wall -Wextra -Werror -g3 -lpthread -pthread -I $(INC_DIR) -fsanitize=thread
 		FLAGS	=	-Wall -Wextra -Werror -g3 -lpthread -pthread -I $(INC_DIR)
 
 .c.o	:

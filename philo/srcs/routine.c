@@ -6,7 +6,7 @@
 /*   By: repinat <repinat@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/19 16:10:59 by repinat           #+#    #+#             */
-/*   Updated: 2022/05/19 16:20:47 by repinat          ###   ########.fr       */
+/*   Updated: 2022/08/29 14:53:08 by repinat          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,11 +39,11 @@ void	is_eating(t_philo *philo)
 	pthread_mutex_lock(&philo->data_back->printing);
 	printing(2, philo);
 	pthread_mutex_unlock(&philo->data_back->printing);
+	usleep(philo->data_back->time_to_eat * 1000);
 	pthread_mutex_lock(&philo->data_back->calcul_ms_mutex);
 	philo->last_eat = calcul_ms(philo->data_back);
 	pthread_mutex_unlock(&philo->data_back->calcul_ms_mutex);
 	unlock_fork(philo);
-	usleep(philo->data_back->time_to_eat * 1000);
 	pthread_mutex_lock(&philo->last_eat_m);
 	philo->eat_count++;
 	pthread_mutex_unlock(&philo->last_eat_m);

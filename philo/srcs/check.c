@@ -3,12 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   check.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: repinat <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: repinat <repinat@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/07 12:09:18 by repinat           #+#    #+#             */
-/*   Updated: 2022/06/07 12:09:20 by repinat          ###   ########.fr       */
+/*   Updated: 2022/08/29 14:41:08 by repinat          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 #include "philo.h"
 
 void	check_died_count(t_data *data, int i)

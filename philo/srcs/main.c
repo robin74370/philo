@@ -6,7 +6,7 @@
 /*   By: repinat <repinat@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/19 16:02:28 by repinat           #+#    #+#             */
-/*   Updated: 2022/05/19 16:23:31 by repinat          ###   ########.fr       */
+/*   Updated: 2022/08/29 14:52:57 by repinat          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,26 +14,17 @@
 
 void	printing(int code, t_philo *philo)
 {
-	unsigned long long	time;
-
-	pthread_mutex_lock(&philo->data_back->calcul_ms_mutex);
-	time = calcul_ms(philo->data_back);
-	pthread_mutex_unlock(&philo->data_back->calcul_ms_mutex);
-	if (code == 1)
-		printf("%llu %d has taken a fork\n", time, philo->philo_id);
-	if (code == 2)
-		printf("%llu %d is eating\n", time, philo->philo_id);
-	if (code == 3)
-		printf("%llu %d is sleeping\n", time, philo->philo_id);
-	if (code == 4)
-		printf("%llu %d is thinking\n", time, philo->philo_id);
-	if (code == 5)
+	pthread_mutex_lock(&philo->data_back->booleen_died_mutex);
+	if (philo->data_back->booleen_died == 1 && code != 5
+		&& (philo->data_back->number_eat_each_philo == -1
+			|| philo->data_back->num_each_philo_count
+			!= philo->data_back->n_philo))
 	{
-		printf("%llu %d died\n", time, philo->philo_id);
-		pthread_mutex_lock(&philo->data_back->booleen_died_mutex);
-		philo->data_back->booleen_died = 1;
 		pthread_mutex_unlock(&philo->data_back->booleen_died_mutex);
+		return ;
 	}
+	pthread_mutex_unlock(&philo->data_back->booleen_died_mutex);
+	affichage(code, philo);
 }
 
 void	check_data(t_data *data)
