@@ -6,7 +6,7 @@
 /*   By: repinat <repinat@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/02 15:06:33 by repinat           #+#    #+#             */
-/*   Updated: 2022/08/30 18:41:55 by repinat          ###   ########.fr       */
+/*   Updated: 2022/08/30 19:00:10 by repinat          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,8 +76,8 @@ void	affichage(int code, t_philo *philo)
 	pthread_mutex_lock(&philo->data_back->calcul_ms_mutex);
 	time = calcul_ms(philo->data_back);
 	pthread_mutex_unlock(&philo->data_back->calcul_ms_mutex);
-//	if (philo->data_back->booleen_died == 0)
-//	{
+	if (philo->data_back->booleen_died == 0)
+	{
 		if (code == 1)
 			printf("%llu %d has taken a fork\n", time, philo->philo_id);
 		if (code == 2)
@@ -86,7 +86,7 @@ void	affichage(int code, t_philo *philo)
 			printf("%llu %d is sleeping\n", time, philo->philo_id);
 		if (code == 4)
 			printf("%llu %d is thinking\n", time, philo->philo_id);
-//	}
+	}
 	if (code == 5)
 	{
 		printf("%llu %d died\n", time, philo->philo_id);
