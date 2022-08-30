@@ -6,7 +6,7 @@
 /*   By: repinat <repinat@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/07 12:09:18 by repinat           #+#    #+#             */
-/*   Updated: 2022/08/29 14:41:08 by repinat          ###   ########.fr       */
+/*   Updated: 2022/08/30 17:06:32 by repinat          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void	check_died_count(t_data *data, int i)
 {
 	pthread_mutex_lock(&data->philos[i].last_eat_m);
-	if (data->philos[i].eat_count == data->number_eat_each_philo)
+	if (data->philos[i].eat_count >= data->number_eat_each_philo)
 		data->num_each_philo_count++;
 	pthread_mutex_unlock(&data->philos[i].last_eat_m);
 }

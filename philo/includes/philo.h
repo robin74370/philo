@@ -6,7 +6,7 @@
 /*   By: repinat <repinat@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/19 16:03:03 by repinat           #+#    #+#             */
-/*   Updated: 2022/08/29 14:17:44 by repinat          ###   ########.fr       */
+/*   Updated: 2022/08/30 17:48:44 by repinat          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,5 @@ void				check_data_2(t_data *data, int i);
 void				printing(int code, t_philo *philo);
 void				check_died_count(t_data *data, int i);
 void				affichage(int code, t_philo *philo);
-
 
 #endif

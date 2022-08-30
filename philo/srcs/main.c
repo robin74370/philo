@@ -6,7 +6,7 @@
 /*   By: repinat <repinat@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/19 16:02:28 by repinat           #+#    #+#             */
-/*   Updated: 2022/08/29 14:52:57 by repinat          ###   ########.fr       */
+/*   Updated: 2022/08/30 18:15:13 by repinat          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void	check_data(t_data *data)
 		}
 		if (data->number_eat_each_philo != -1)
 			check_died_count(data, i);
-		if (data->num_each_philo_count == data->n_philo)
+		if (data->num_each_philo_count >= data->n_philo)
 		{
 			check_data_3(data);
 			return ;
@@ -92,7 +92,7 @@ int	init_struct(t_data *data, int ac, char **av)
 	data->time_to_eat = ft_atoi(av[3]);
 	data->time_to_sleep = ft_atoi(av[4]);
 	if (ac == 6)
-		data->number_eat_each_philo = ft_atoi(av[5]);
+		data->number_eat_each_philo = ft_atoi(av[5]) + 1;
 	else
 		data->number_eat_each_philo = -1;
 	i = -1;
